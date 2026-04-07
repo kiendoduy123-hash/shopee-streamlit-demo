@@ -97,6 +97,9 @@ st.markdown("""
         color: #6c757d;
         margin-top: 0.5rem;
         min-height: 1.5rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     .product-rating {
         font-size: 0.9rem;
