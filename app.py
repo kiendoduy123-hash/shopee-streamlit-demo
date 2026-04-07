@@ -124,41 +124,41 @@ if "favorites" not in st.session_state:
     st.session_state.favorites = set() # Set of product_ids
 
 if "active_category" not in st.session_state:
-    st.session_state.active_category = "All"
+    st.session_state.active_category = "Tất cả"
 
 # --- MOCK DATA ---
 if "products" not in st.session_state:
     st.session_state.products = [
         # Football
-        {"id": 1, "name": "Áo đấu Arsenal 2026/27 (Concept)", "price": 1850000, "image": "https://picsum.photos/seed/football1/400/300", "desc": "Áo đấu mẫu concept mới nhất của pháo thủ.", "category": "Football", "tag": "Top Item", "brand": "Adidas"},
-        {"id": 2, "name": "Áo khoác Chelsea Training", "price": 1200000, "image": "https://picsum.photos/seed/football2/400/300", "desc": "Áo khoác tập luyện chuyên nghiệp.", "category": "Football", "brand": "Nike"},
-        {"id": 3, "name": "Bóng thi đấu Premier League Official", "price": 3500000, "image": "https://picsum.photos/seed/football3/400/300", "desc": "Bóng chính thức dùng trong Ngoại hạng Anh.", "category": "Football", "brand": "Nike"},
-        {"id": 4, "name": "Khăn len cổ động Arsenal (Classic)", "price": 450000, "image": "https://picsum.photos/seed/football4/400/300", "desc": "Khăn len cổ điển giữ ấm mùa đông.", "category": "Football", "brand": "Premier League"},
-        {"id": 5, "name": "Găng tay thủ môn chuyên nghiệp", "price": 2100000, "image": "https://picsum.photos/seed/football5/400/300", "desc": "Găng tay độ bám cao, bảo vệ ngón tay.", "category": "Football", "brand": "Adidas"},
+        {"id": 1, "name": "Áo đấu Arsenal 2026/27 (Concept)", "price": 1850000, "image": "https://picsum.photos/seed/football1/400/300", "desc": "Áo đấu mẫu concept mới nhất của pháo thủ.", "category": "Bóng đá", "tag": "Top Item", "brand": "Adidas"},
+        {"id": 2, "name": "Áo khoác Chelsea Training", "price": 1200000, "image": "https://picsum.photos/seed/football2/400/300", "desc": "Áo khoác tập luyện chuyên nghiệp.", "category": "Bóng đá", "brand": "Nike"},
+        {"id": 3, "name": "Bóng thi đấu Premier League Official", "price": 3500000, "image": "https://picsum.photos/seed/football3/400/300", "desc": "Bóng chính thức dùng trong Ngoại hạng Anh.", "category": "Bóng đá", "brand": "Nike"},
+        {"id": 4, "name": "Khăn len cổ động Arsenal (Classic)", "price": 450000, "image": "https://picsum.photos/seed/football4/400/300", "desc": "Khăn len cổ điển giữ ấm mùa đông.", "category": "Bóng đá", "brand": "Premier League"},
+        {"id": 5, "name": "Găng tay thủ môn chuyên nghiệp", "price": 2100000, "image": "https://picsum.photos/seed/football5/400/300", "desc": "Găng tay độ bám cao, bảo vệ ngón tay.", "category": "Bóng đá", "brand": "Adidas"},
         # Anime & Media
-        {"id": 6, "name": "Đĩa than RADWIMPS - Album \"Yuushinron\"", "price": 1500000, "image": "https://picsum.photos/seed/anime1/400/300", "desc": "Đĩa than đặc biệt số lượng có hạn.", "category": "Anime & Media", "tag": "Limited", "brand": "Khác"},
-        {"id": 7, "name": "Mô hình Naruto Shippuden", "price": 850000, "image": "https://picsum.photos/seed/anime2/400/300", "desc": "Mô hình chi tiết cao vũ trụ Naruto.", "category": "Anime & Media", "brand": "Khác"},
-        {"id": 8, "name": "Sách ảnh (Artbook) Your Name", "price": 600000, "image": "https://picsum.photos/seed/anime3/400/300", "desc": "Artbook tuyệt đẹp từ Makoto Shinkai.", "category": "Anime & Media", "brand": "Studio Ghibli"},
-        {"id": 9, "name": "Gấu bông Totoro (Studio Ghibli)", "price": 350000, "image": "https://picsum.photos/seed/anime4/400/300", "desc": "Gấu bông mềm mịn chính hãng Ghibli.", "category": "Anime & Media", "brand": "Studio Ghibli"},
-        {"id": 10, "name": "Poster lụa Anime Theme Songs", "price": 250000, "image": "https://picsum.photos/seed/anime5/400/300", "desc": "Poster chất lượng cao về các bản nhạc Anime.", "category": "Anime & Media", "brand": "Khác"},
+        {"id": 6, "name": "Đĩa than RADWIMPS - Album \"Yuushinron\"", "price": 1500000, "image": "https://picsum.photos/seed/anime1/400/300", "desc": "Đĩa than đặc biệt số lượng có hạn.", "category": "Anime & Giải trí", "tag": "Limited", "brand": "Khác"},
+        {"id": 7, "name": "Mô hình Naruto Shippuden", "price": 850000, "image": "https://picsum.photos/seed/anime2/400/300", "desc": "Mô hình chi tiết cao vũ trụ Naruto.", "category": "Anime & Giải trí", "brand": "Khác"},
+        {"id": 8, "name": "Sách ảnh (Artbook) Your Name", "price": 600000, "image": "https://picsum.photos/seed/anime3/400/300", "desc": "Artbook tuyệt đẹp từ Makoto Shinkai.", "category": "Anime & Giải trí", "brand": "Studio Ghibli"},
+        {"id": 9, "name": "Gấu bông Totoro (Studio Ghibli)", "price": 350000, "image": "https://picsum.photos/seed/anime4/400/300", "desc": "Gấu bông mềm mịn chính hãng Ghibli.", "category": "Anime & Giải trí", "brand": "Studio Ghibli"},
+        {"id": 10, "name": "Poster lụa Anime Theme Songs", "price": 250000, "image": "https://picsum.photos/seed/anime5/400/300", "desc": "Poster chất lượng cao về các bản nhạc Anime.", "category": "Anime & Giải trí", "brand": "Khác"},
         # Physics Gadgets
-        {"id": 11, "name": "Con lắc Newton (Động năng)", "price": 280000, "image": "https://picsum.photos/seed/physics1/400/300", "desc": "Đồ chơi giải trí minh hoạ định luật vật lý.", "category": "Physics Gadgets", "brand": "Khác"},
-        {"id": 12, "name": "Động cơ Stirling", "price": 1150000, "image": "https://picsum.photos/seed/physics2/400/300", "desc": "Mô hình động cơ nhiệt chạy bằng cồn.", "category": "Physics Gadgets", "tag": "Top Item", "brand": "Khác"},
-        {"id": 13, "name": "Quả cầu lơ lửng từ tính", "price": 950000, "image": "https://picsum.photos/seed/physics3/400/300", "desc": "Quả cầu lơ lửng giữa không trung bằng từ trường.", "category": "Physics Gadgets", "brand": "Khác"},
-        {"id": 14, "name": "Lăng kính thủy tinh quang học", "price": 180000, "image": "https://picsum.photos/seed/physics4/400/300", "desc": "Khối lăng kính phân tách ánh sáng trắng.", "category": "Physics Gadgets", "brand": "Khác"},
-        {"id": 15, "name": "Con quay hồi chuyển kim loại", "price": 420000, "image": "https://picsum.photos/seed/physics5/400/300", "desc": "Con quay cân bằng cực kỳ chuẩn xác.", "category": "Physics Gadgets", "brand": "Khác"},
+        {"id": 11, "name": "Con lắc Newton (Động năng)", "price": 280000, "image": "https://picsum.photos/seed/physics1/400/300", "desc": "Đồ chơi giải trí minh hoạ định luật vật lý.", "category": "Đồ chơi Vật lý", "brand": "Khác"},
+        {"id": 12, "name": "Động cơ Stirling", "price": 1150000, "image": "https://picsum.photos/seed/physics2/400/300", "desc": "Mô hình động cơ nhiệt chạy bằng cồn.", "category": "Đồ chơi Vật lý", "tag": "Top Item", "brand": "Khác"},
+        {"id": 13, "name": "Quả cầu lơ lửng từ tính", "price": 950000, "image": "https://picsum.photos/seed/physics3/400/300", "desc": "Quả cầu lơ lửng giữa không trung bằng từ trường.", "category": "Đồ chơi Vật lý", "brand": "Khác"},
+        {"id": 14, "name": "Lăng kính thủy tinh quang học", "price": 180000, "image": "https://picsum.photos/seed/physics4/400/300", "desc": "Khối lăng kính phân tách ánh sáng trắng.", "category": "Đồ chơi Vật lý", "brand": "Khác"},
+        {"id": 15, "name": "Con quay hồi chuyển kim loại", "price": 420000, "image": "https://picsum.photos/seed/physics5/400/300", "desc": "Con quay cân bằng cực kỳ chuẩn xác.", "category": "Đồ chơi Vật lý", "brand": "Khác"},
         # IT & Tech
-        {"id": 16, "name": "Bàn phím cơ Blue Pastel", "price": 2500000, "image": "https://picsum.photos/seed/tech1/400/300", "desc": "Bàn phím cơ switch custom gõ êm ái.", "category": "IT & Tech", "brand": "Khác"},
-        {"id": 17, "name": "Linh vật Linux Tux", "price": 300000, "image": "https://picsum.photos/seed/tech2/400/300", "desc": "Thú nhồi bông chim cánh cụt cho Coder.", "category": "IT & Tech", "brand": "Linux Foundation"},
-        {"id": 18, "name": "Ổ cứng SSD di động 2TB", "price": 3200000, "image": "https://picsum.photos/seed/tech3/400/300", "desc": "Ổ cứng flash tốc độ flash siêu cao.", "category": "IT & Tech", "brand": "Khác"},
-        {"id": 19, "name": "Bộ kit Raspberry Pi 5", "price": 2800000, "image": "https://picsum.photos/seed/tech4/400/300", "desc": "Mạch máy tính mini dùng cho dự án IoT.", "category": "IT & Tech", "tag": "Best Seller", "brand": "Khác"},
-        {"id": 20, "name": "Chuột Ergonomic cho Coder", "price": 1400000, "image": "https://picsum.photos/seed/tech5/400/300", "desc": "Chuột chống mỏi tay khi sử dụng thời gian dài.", "category": "IT & Tech", "brand": "Khác"},
+        {"id": 16, "name": "Bàn phím cơ Blue Pastel", "price": 2500000, "image": "https://picsum.photos/seed/tech1/400/300", "desc": "Bàn phím cơ switch custom gõ êm ái.", "category": "Công nghệ & IT", "brand": "Khác"},
+        {"id": 17, "name": "Linh vật Linux Tux", "price": 300000, "image": "https://picsum.photos/seed/tech2/400/300", "desc": "Thú nhồi bông chim cánh cụt cho Coder.", "category": "Công nghệ & IT", "brand": "Linux Foundation"},
+        {"id": 18, "name": "Ổ cứng SSD di động 2TB", "price": 3200000, "image": "https://picsum.photos/seed/tech3/400/300", "desc": "Ổ cứng flash tốc độ flash siêu cao.", "category": "Công nghệ & IT", "brand": "Khác"},
+        {"id": 19, "name": "Bộ kit Raspberry Pi 5", "price": 2800000, "image": "https://picsum.photos/seed/tech4/400/300", "desc": "Mạch máy tính mini dùng cho dự án IoT.", "category": "Công nghệ & IT", "tag": "Best Seller", "brand": "Khác"},
+        {"id": 20, "name": "Chuột Ergonomic cho Coder", "price": 1400000, "image": "https://picsum.photos/seed/tech5/400/300", "desc": "Chuột chống mỏi tay khi sử dụng thời gian dài.", "category": "Công nghệ & IT", "brand": "Khác"},
         # Student Wellness
-        {"id": 21, "name": "Tai nghe chống ồn", "price": 4500000, "image": "https://picsum.photos/seed/well1/400/300", "desc": "Headphones over-ear hoàn toàn tĩnh lặng.", "category": "Student Wellness", "brand": "Khác"},
-        {"id": 22, "name": "Đèn nhịp sinh học", "price": 750000, "image": "https://picsum.photos/seed/well2/400/300", "desc": "Đèn học tự đổi màu bảo vệ mắt và giấc ngủ.", "category": "Student Wellness", "brand": "Khác"},
-        {"id": 23, "name": "Sổ tay lập kế hoạch", "price": 220000, "image": "https://picsum.photos/seed/well3/400/300", "desc": "Sổ tay tối ưu năng suất học tập và tinh thần.", "category": "Student Wellness", "tag": "For Students", "brand": "Khác"},
-        {"id": 24, "name": "Máy xông tinh dầu", "price": 550000, "image": "https://picsum.photos/seed/well4/400/300", "desc": "Máy khuếch tán giải tỏa căng thẳng.", "category": "Student Wellness", "brand": "Khác"},
-        {"id": 25, "name": "Chăn trọng lực trợ ngủ", "price": 1250000, "image": "https://picsum.photos/seed/well5/400/300", "desc": "Weighted blanket cải thiện chất lượng giấc ngủ.", "category": "Student Wellness", "brand": "Khác"}
+        {"id": 21, "name": "Tai nghe chống ồn", "price": 4500000, "image": "https://picsum.photos/seed/well1/400/300", "desc": "Headphones over-ear hoàn toàn tĩnh lặng.", "category": "Đời sống Học đường", "brand": "Khác"},
+        {"id": 22, "name": "Đèn nhịp sinh học", "price": 750000, "image": "https://picsum.photos/seed/well2/400/300", "desc": "Đèn học tự đổi màu bảo vệ mắt và giấc ngủ.", "category": "Đời sống Học đường", "brand": "Khác"},
+        {"id": 23, "name": "Sổ tay lập kế hoạch", "price": 220000, "image": "https://picsum.photos/seed/well3/400/300", "desc": "Sổ tay tối ưu năng suất học tập và tinh thần.", "category": "Đời sống Học đường", "tag": "For Students", "brand": "Khác"},
+        {"id": 24, "name": "Máy xông tinh dầu", "price": 550000, "image": "https://picsum.photos/seed/well4/400/300", "desc": "Máy khuếch tán giải tỏa căng thẳng.", "category": "Đời sống Học đường", "brand": "Khác"},
+        {"id": 25, "name": "Chăn trọng lực trợ ngủ", "price": 1250000, "image": "https://picsum.photos/seed/well5/400/300", "desc": "Weighted blanket cải thiện chất lượng giấc ngủ.", "category": "Đời sống Học đường", "brand": "Khác"}
     ]
     
     random.seed(42) # Giữ cho rating không thay đổi giữa các phiên rerun
@@ -255,7 +255,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 if st.session_state.current_page == "Home":
     
     # 1. CATEGORY PILLS (Phân Loại)
-    categories = ["All", "Football", "Anime & Media", "Physics Gadgets", "IT & Tech", "Student Wellness"]
+    categories = ["Tất cả", "Bóng đá", "Anime & Giải trí", "Đồ chơi Vật lý", "Công nghệ & IT", "Đời sống Học đường"]
     pill_cols = st.columns(len(categories))
     for i, cat in enumerate(categories):
         with pill_cols[i]:
@@ -309,7 +309,7 @@ if st.session_state.current_page == "Home":
         # Bộ lọc dữ liệu áp dụng
         query_val = search_query.lower() if search_query else ""
         filtered = [p for p in st.session_state.products if 
-                    (st.session_state.active_category == "All" or p["category"] == st.session_state.active_category) 
+                    (st.session_state.active_category == "Tất cả" or p["category"] == st.session_state.active_category) 
                     and (price_range[0] <= p["price"] <= price_range[1])
                     and (query_val in p["name"].lower())
                     and (p.get("rating", 0) >= min_star)
