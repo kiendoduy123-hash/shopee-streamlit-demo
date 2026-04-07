@@ -16,3 +16,10 @@ uv run streamlit run app.py
 git config --global user.name "KIÊN ĐỖ"
 
 git config --global user.email "kiendoduy123@gmail.com"
+git add .
+git commit -m "Phien ban dau tien cua Shopee Blue Pastel"
+git remote add origin [DÁN_LINK_VỪA_COPY]
+
+git branch -M main
+
+git push -u origin main
