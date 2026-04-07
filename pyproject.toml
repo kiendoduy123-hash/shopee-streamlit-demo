@@ -1,0 +1,14 @@
+[project]
+name = "shopee-clone-mvp"
+version = "0.1.0"
+description = "A Shopee-like e-commerce website MVP"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "streamlit>=1.30.0",
+    "pandas>=2.0.0",
+]
+
+# Non-package project
+[tool.uv]
+package = false

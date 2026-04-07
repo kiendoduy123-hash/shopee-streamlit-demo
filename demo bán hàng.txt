@@ -1,0 +1,18 @@
+Tớ sử dụng antigravity. Tớ muốn làm một website bán hàng mô phỏng theo shoppee. Website của tớ có các chức năng sau:
+
+1	Xem chi tiết: Với tư cách là người mua, tôi muốn xem thông tin chi tiết sản phẩm để hiểu rõ về tính năng và giá cả trước khi mua.
+2	Thêm vào giỏ: Với tư cách là người mua, tôi muốn thêm sản phẩm vào giỏ hàng để có thể lưu lại và mua nhiều món cùng lúc.	
+3	Cập nhật giỏ hàng: Với tư cách là người mua, tôi muốn thay đổi số lượng hoặc xóa sản phẩm trong giỏ để điều chỉnh đơn hàng theo ý muốn.
+4	Chọn địa chỉ: Với tư cách là người mua, tôi muốn chọn địa chỉ nhận hàng từ danh sách đã lưu để thông tin giao hàng chính xác.
+5	Chọn vận chuyển: Với tư cách là người mua, tôi muốn chọn các đơn vị vận chuyển khác nhau để tối ưu phí ship hoặc thời gian nhận hàng.	
+6	Nhập mã giảm giá: Với tư cách là người mua, tôi muốn áp dụng mã voucher để tiết kiệm chi phí cho đơn hàng của mình.	
+7	Chọn thanh toán: Với tư cách là người mua, tôi muốn chọn giữa thanh toán COD hoặc ví điện tử để linh hoạt về tài chính.
+8	Xác nhận đặt hàng: Với tư cách là người mua, tôi muốn nhấn nút đặt hàng và nhận thông báo thành công để chắc chắn đơn hàng đã được ghi nhận.
+
+Tớ sẽ sử dụng python3 biến môi trường uv và streamlit, hãy review cho tớ plan này, nếu được hãy viết prompt để gửi vào google antigravity để thực hiện
+đầy đủ các yêu cầu trên
+
+uv run streamlit run app.py
+git config --global user.name "KIÊN ĐỖ"
+
+git config --global user.email "kiendoduy123@gmail.com"
