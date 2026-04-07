@@ -202,7 +202,7 @@ if not st.session_state.logged_in:
     _, col_login, _ = st.columns([1, 1.2, 1])
     with col_login:
         with st.container(border=True):
-            st.markdown("<h2 style='text-align: center; color: #202124;'>Welcome to MLC Store</h2>", unsafe_allow_html=True)
+            st.markdown("<h2 style='text-align: center; color: #202124;'>Welcome to DDK Store</h2>", unsafe_allow_html=True)
             st.markdown("<p style='text-align: center; color: #6c757d;'>Please sign in to continue</p>", unsafe_allow_html=True)
             st.divider()
             
@@ -223,7 +223,7 @@ st.write("") # Dãn cách xíu
 c_logo, c_search, c_greet, c_out, c_ord, c_fav, c_cart = st.columns([1.5, 2.2, 1.5, 0.8, 1, 1.2, 1], gap="small")
 
 with c_logo:
-    st.markdown('<div class="header-logo">MLC E-com</div>', unsafe_allow_html=True)
+    st.markdown('<div class="header-logo">DDK Store</div>', unsafe_allow_html=True)
 with c_search:
     product_names = [p["name"] for p in st.session_state.products]
     search_query = st.selectbox("Tìm kiếm", options=product_names, index=None, placeholder="🔍 Search for products...", label_visibility="collapsed")
