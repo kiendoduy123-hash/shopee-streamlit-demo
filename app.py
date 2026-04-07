@@ -176,6 +176,7 @@ def go_to_page(page_name):
 def set_category(cat):
     st.session_state.active_category = cat
 
+# SHPP-3: Hàm xử lý thêm/xóa sản phẩm yêu thích
 def toggle_favorite(pid):
     if pid in st.session_state.favorites:
         st.session_state.favorites.remove(pid)
@@ -184,6 +185,7 @@ def toggle_favorite(pid):
         st.session_state.favorites.add(pid)
         st.toast("Đã thêm vào mục yêu thích! ❤️")
 
+# SHPP-5: Quản lý logic Giỏ hàng.
 def add_to_cart(pid, qty=1):
     if pid in st.session_state.cart:
         st.session_state.cart[pid] += qty
@@ -225,6 +227,7 @@ c_logo, c_search, c_greet, c_out, c_ord, c_fav, c_cart = st.columns([1.5, 2.2, 1
 
 with c_logo:
     st.markdown('<div class="header-logo">DDK Store</div>', unsafe_allow_html=True)
+# SHPP-4: Ô tìm kiếm sản phẩm thông minh trên Header
 with c_search:
     product_names = [p["name"] for p in st.session_state.products]
     search_query = st.selectbox("Tìm kiếm", options=product_names, index=None, placeholder="🔍 Search for products...", label_visibility="collapsed")
@@ -310,6 +313,7 @@ if st.session_state.current_page == "Home":
             
         # Bộ lọc dữ liệu áp dụng
         query_val = search_query.lower() if search_query else ""
+        # SHPP-4: Xử lý logic lọc sản phẩm theo từ khóa tìm kiếm
         filtered = [p for p in st.session_state.products if 
                     (st.session_state.active_category == "Tất cả" or p["category"] == st.session_state.active_category) 
                     and (price_range[0] <= p["price"] <= price_range[1])
@@ -348,6 +352,7 @@ if st.session_state.current_page == "Home":
                         if st.button(format_currency_vnd(p['price']), key=f"prc_{p['id']}", use_container_width=True, type="primary"):
                             pass
                             
+                    # SHPP-3: Hiển thị chi tiết sản phẩm và nút Thích
                     with st.expander("📝 Chi tiết sản phẩm"):
                         st.write(p['desc'])
                         if st.button(f"Thích {heart}", key=f"fav_{p['id']}", use_container_width=True):
@@ -382,6 +387,7 @@ elif st.session_state.current_page == "Favorites":
                             toggle_favorite(p['id'])
                             st.rerun()
 
+# SHPP-5: Quản lý logic Giỏ hàng.
 elif st.session_state.current_page == "Cart":
     st.button("← Quay lại Lựa Sản phẩm", on_click=lambda: go_to_page("Home"))
     st.markdown("<h2>🛒 Giỏ Hàng & Quản Lý Đơn</h2>", unsafe_allow_html=True)
@@ -438,6 +444,7 @@ elif st.session_state.current_page == "Checkout":
             with st.container(border=True):
                 st.subheader("Hoá Đơn Bán Lẻ")
                 subtotal = sum((get_product(pid)["price"] * qty for pid, qty in st.session_state.cart.items()))
+                # SHPP-6: Tính toán Voucher và Phí vận chuyển.
                 discount = subtotal * 0.1 if voucher.strip().upper() == "SALE10" else 0
                 shipping_fee = 20000 # Tạm fix vì tính logic đơn giản MVP
                 
@@ -451,6 +458,7 @@ elif st.session_state.current_page == "Checkout":
                 st.divider()
                 st.markdown(f"**TỔNG TIỀN:** <br><span style='color: #A7C7E7; font-size: 2rem; font-weight: 800;'>{format_currency_vnd(total)}</span>", unsafe_allow_html=True)
                 st.write("")
+                # SHPP-7: Logic Thanh toán và hiệu ứng thành công.
                 if st.button("XÁC NHẬN MUA", use_container_width=True, type="primary"):
                     new_order = {
                         "id": f"ORD-{random.randint(1000, 9999)}",
@@ -464,6 +472,7 @@ elif st.session_state.current_page == "Checkout":
                     st.success("🎉 Giao dịch thành công! Gói hàng của bạn đã được đóng gói ảo.")
                     st.balloons()
 
+# SHPP-8: Hiển thị lịch sử đơn hàng đã mua.
 elif st.session_state.current_page == "Orders":
     st.button("← Tiếp tục Mua Sắm", on_click=lambda: go_to_page("Home"))
     st.markdown("<h2>📦 Lịch Sử Đơn Hàng</h2>", unsafe_allow_html=True)
