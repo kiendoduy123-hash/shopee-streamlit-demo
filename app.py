@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import random
 import datetime
+import database as db
 
 # Thiết lập trang - Phải là lệnh đầu tiên
 st.set_page_config(page_title="Shopee MVP Prototype", page_icon="🛍️", layout="wide", initial_sidebar_state="expanded")
@@ -51,17 +52,19 @@ st.markdown("""
         color: #A7C7E7 !important;
     }
 
-    /* Ô input tìm kiếm */
-    [data-testid="stTextInput"] input {
+    /* Ô input tìm kiếm & chatbot */
+    [data-testid="stTextInput"] > div > div {
         border-radius: 25px !important;
-        background-color: #F1F3F4;
-        border: none !important;
-        padding-left: 1.5rem;
+        background-color: #F1F3F4 !important;
     }
-    [data-testid="stTextInput"] input:focus {
+    [data-testid="stTextInput"] input {
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+        background-color: transparent !important;
+    }
+    [data-testid="stTextInput"] > div > div:focus-within {
         border: 2px solid #A7C7E7 !important;
-        background-color: white;
-        box-shadow: none !important;
+        background-color: white !important;
     }
     
     /* Đầu trang (Header Logo) */
@@ -70,7 +73,6 @@ st.markdown("""
         font-weight: 900;
         letter-spacing: -1px;
         color: #202124;
-        margin-top: -10px;
         white-space: nowrap;
     }
     
@@ -115,14 +117,14 @@ if "logged_in" not in st.session_state:
 if "username" not in st.session_state:
     st.session_state.username = ""
 
+if "user_role" not in st.session_state:
+    st.session_state.user_role = "user"
+
 if "current_page" not in st.session_state:
     st.session_state.current_page = "Home"
 
 if "cart" not in st.session_state:
     st.session_state.cart = {} # {product_id: quantity}
-
-if "orders" not in st.session_state:
-    st.session_state.orders = []
 
 if "favorites" not in st.session_state:
     st.session_state.favorites = set() # Set of product_ids
@@ -130,44 +132,12 @@ if "favorites" not in st.session_state:
 if "active_category" not in st.session_state:
     st.session_state.active_category = "Tất cả"
 
-# --- MOCK DATA ---
+# --- DATA LAYER ---
+def fetch_products():
+    return db.get_all_products()
+
 if "products" not in st.session_state:
-    st.session_state.products = [
-        # Football
-        {"id": 1, "name": "Áo đấu Arsenal 2026/27 (Concept)", "price": 1850000, "image": "https://picsum.photos/seed/football1/400/300", "desc": "Áo đấu mẫu concept mới nhất của pháo thủ.", "category": "Bóng đá", "tag": "Top Item", "brand": "Adidas"},
-        {"id": 2, "name": "Áo khoác Chelsea Training", "price": 1200000, "image": "https://picsum.photos/seed/football2/400/300", "desc": "Áo khoác tập luyện chuyên nghiệp.", "category": "Bóng đá", "brand": "Nike"},
-        {"id": 3, "name": "Bóng thi đấu Premier League Official", "price": 3500000, "image": "https://picsum.photos/seed/football3/400/300", "desc": "Bóng chính thức dùng trong Ngoại hạng Anh.", "category": "Bóng đá", "brand": "Nike"},
-        {"id": 4, "name": "Khăn len cổ động Arsenal (Classic)", "price": 450000, "image": "https://picsum.photos/seed/football4/400/300", "desc": "Khăn len cổ điển giữ ấm mùa đông.", "category": "Bóng đá", "brand": "Premier League"},
-        {"id": 5, "name": "Găng tay thủ môn chuyên nghiệp", "price": 2100000, "image": "https://picsum.photos/seed/football5/400/300", "desc": "Găng tay độ bám cao, bảo vệ ngón tay.", "category": "Bóng đá", "brand": "Adidas"},
-        # Anime & Media
-        {"id": 6, "name": "Đĩa than RADWIMPS - Album \"Yuushinron\"", "price": 1500000, "image": "https://picsum.photos/seed/anime1/400/300", "desc": "Đĩa than đặc biệt số lượng có hạn.", "category": "Anime & Giải trí", "tag": "Limited", "brand": "Khác"},
-        {"id": 7, "name": "Mô hình Naruto Shippuden", "price": 850000, "image": "https://picsum.photos/seed/anime2/400/300", "desc": "Mô hình chi tiết cao vũ trụ Naruto.", "category": "Anime & Giải trí", "brand": "Khác"},
-        {"id": 8, "name": "Sách ảnh (Artbook) Your Name", "price": 600000, "image": "https://picsum.photos/seed/anime3/400/300", "desc": "Artbook tuyệt đẹp từ Makoto Shinkai.", "category": "Anime & Giải trí", "brand": "Studio Ghibli"},
-        {"id": 9, "name": "Gấu bông Totoro (Studio Ghibli)", "price": 350000, "image": "https://picsum.photos/seed/anime4/400/300", "desc": "Gấu bông mềm mịn chính hãng Ghibli.", "category": "Anime & Giải trí", "brand": "Studio Ghibli"},
-        {"id": 10, "name": "Poster lụa Anime Theme Songs", "price": 250000, "image": "https://picsum.photos/seed/anime5/400/300", "desc": "Poster chất lượng cao về các bản nhạc Anime.", "category": "Anime & Giải trí", "brand": "Khác"},
-        # Physics Gadgets
-        {"id": 11, "name": "Con lắc Newton (Động năng)", "price": 280000, "image": "https://picsum.photos/seed/physics1/400/300", "desc": "Đồ chơi giải trí minh hoạ định luật vật lý.", "category": "Đồ chơi Vật lý", "brand": "Khác"},
-        {"id": 12, "name": "Động cơ Stirling", "price": 1150000, "image": "https://picsum.photos/seed/physics2/400/300", "desc": "Mô hình động cơ nhiệt chạy bằng cồn.", "category": "Đồ chơi Vật lý", "tag": "Top Item", "brand": "Khác"},
-        {"id": 13, "name": "Quả cầu lơ lửng từ tính", "price": 950000, "image": "https://picsum.photos/seed/physics3/400/300", "desc": "Quả cầu lơ lửng giữa không trung bằng từ trường.", "category": "Đồ chơi Vật lý", "brand": "Khác"},
-        {"id": 14, "name": "Lăng kính thủy tinh quang học", "price": 180000, "image": "https://picsum.photos/seed/physics4/400/300", "desc": "Khối lăng kính phân tách ánh sáng trắng.", "category": "Đồ chơi Vật lý", "brand": "Khác"},
-        {"id": 15, "name": "Con quay hồi chuyển kim loại", "price": 420000, "image": "https://picsum.photos/seed/physics5/400/300", "desc": "Con quay cân bằng cực kỳ chuẩn xác.", "category": "Đồ chơi Vật lý", "brand": "Khác"},
-        # IT & Tech
-        {"id": 16, "name": "Bàn phím cơ Blue Pastel", "price": 2500000, "image": "https://picsum.photos/seed/tech1/400/300", "desc": "Bàn phím cơ switch custom gõ êm ái.", "category": "Công nghệ & IT", "brand": "Khác"},
-        {"id": 17, "name": "Linh vật Linux Tux", "price": 300000, "image": "https://picsum.photos/seed/tech2/400/300", "desc": "Thú nhồi bông chim cánh cụt cho Coder.", "category": "Công nghệ & IT", "brand": "Linux Foundation"},
-        {"id": 18, "name": "Ổ cứng SSD di động 2TB", "price": 3200000, "image": "https://picsum.photos/seed/tech3/400/300", "desc": "Ổ cứng flash tốc độ flash siêu cao.", "category": "Công nghệ & IT", "brand": "Khác"},
-        {"id": 19, "name": "Bộ kit Raspberry Pi 5", "price": 2800000, "image": "https://picsum.photos/seed/tech4/400/300", "desc": "Mạch máy tính mini dùng cho dự án IoT.", "category": "Công nghệ & IT", "tag": "Best Seller", "brand": "Khác"},
-        {"id": 20, "name": "Chuột Ergonomic cho Coder", "price": 1400000, "image": "https://picsum.photos/seed/tech5/400/300", "desc": "Chuột chống mỏi tay khi sử dụng thời gian dài.", "category": "Công nghệ & IT", "brand": "Khác"},
-        # Student Wellness
-        {"id": 21, "name": "Tai nghe chống ồn", "price": 4500000, "image": "https://picsum.photos/seed/well1/400/300", "desc": "Headphones over-ear hoàn toàn tĩnh lặng.", "category": "Đời sống Học đường", "brand": "Khác"},
-        {"id": 22, "name": "Đèn nhịp sinh học", "price": 750000, "image": "https://picsum.photos/seed/well2/400/300", "desc": "Đèn học tự đổi màu bảo vệ mắt và giấc ngủ.", "category": "Đời sống Học đường", "brand": "Khác"},
-        {"id": 23, "name": "Sổ tay lập kế hoạch", "price": 220000, "image": "https://picsum.photos/seed/well3/400/300", "desc": "Sổ tay tối ưu năng suất học tập và tinh thần.", "category": "Đời sống Học đường", "tag": "For Students", "brand": "Khác"},
-        {"id": 24, "name": "Máy xông tinh dầu", "price": 550000, "image": "https://picsum.photos/seed/well4/400/300", "desc": "Máy khuếch tán giải tỏa căng thẳng.", "category": "Đời sống Học đường", "brand": "Khác"},
-        {"id": 25, "name": "Chăn trọng lực trợ ngủ", "price": 1250000, "image": "https://picsum.photos/seed/well5/400/300", "desc": "Weighted blanket cải thiện chất lượng giấc ngủ.", "category": "Đời sống Học đường", "brand": "Khác"}
-    ]
-    
-    random.seed(42) # Giữ cho rating không thay đổi giữa các phiên rerun
-    for p in st.session_state.products:
-        p["rating"] = round(random.uniform(3.0, 5.0), 1)
+    st.session_state.products = fetch_products()
 
 # --- HELPER FUNCTIONS ---
 def format_currency_vnd(amount):
@@ -179,14 +149,18 @@ def go_to_page(page_name):
 def set_category(cat):
     st.session_state.active_category = cat
 
-# SHPP-3: Hàm xử lý thêm/xóa sản phẩm yêu thích
+# SHPP-3: Hàm xử lý thêm/xóa sản phẩm yêu thích (Database Sync)
 def toggle_favorite(pid):
-    if pid in st.session_state.favorites:
-        st.session_state.favorites.remove(pid)
-        st.toast("Đã bỏ yêu thích.")
+    if st.session_state.logged_in:
+        added = db.toggle_favorite_db(st.session_state.username, pid)
+        if added:
+            st.session_state.favorites.add(pid)
+            st.toast("Đã thêm vào mục yêu thích! ❤️")
+        else:
+            st.session_state.favorites.remove(pid)
+            st.toast("Đã bỏ yêu thích.")
     else:
-        st.session_state.favorites.add(pid)
-        st.toast("Đã thêm vào mục yêu thích! ❤️")
+        st.toast("Bạn cần đăng nhập để lưu yêu thích!", icon="⚠️")
 
 # SHPP-5: Quản lý logic Giỏ hàng.
 def add_to_cart(pid, qty=1):
@@ -202,6 +176,15 @@ def get_product(pid):
             return p
     return None
 
+# --- INITIAL DATA LOAD ON LOGIN ---
+def load_user_data(username, role):
+    st.session_state.logged_in = True
+    st.session_state.username = username
+    st.session_state.user_role = role
+    st.session_state.favorites = db.get_favorites(username)
+    st.session_state.cart = {} # clear cart cross user
+    st.rerun()
+
 # --- LOGIN AUTHENTICATION FLOW ---
 if not st.session_state.logged_in:
     st.markdown("<br><br><br>", unsafe_allow_html=True)
@@ -209,42 +192,75 @@ if not st.session_state.logged_in:
     with col_login:
         with st.container(border=True):
             st.markdown("<h2 style='text-align: center; color: #202124;'>Welcome to DDK Store</h2>", unsafe_allow_html=True)
-            st.markdown("<p style='text-align: center; color: #6c757d;'>Please sign in to continue</p>", unsafe_allow_html=True)
+            st.markdown("<p style='text-align: center; color: #6c757d;'>Đăng nhập hoặc đăng ký</p>", unsafe_allow_html=True)
             st.divider()
             
-            user_input = st.text_input("Username", placeholder="Enter any username (e.g., Kien)")
-            pwd_input = st.text_input("Password", type="password", placeholder="Mock password")
+            tab_login, tab_reg = st.tabs(["Đăng nhập", "Đăng ký"])
             
-            if st.button("Login", type="primary", use_container_width=True):
-                if user_input.strip() != "":
-                    st.session_state.logged_in = True
-                    st.session_state.username = user_input.strip()
-                    st.rerun()
-                else:
-                    st.error("Please enter a username!")
+            with tab_login:
+                with st.form("login_form", border=False):
+                    user_log = st.text_input("Tên đăng nhập", key="user_log_in")
+                    pwd_log = st.text_input("Mật khẩu", type="password", key="pwd_log_in")
+                    
+                    if st.form_submit_button("Đăng nhập", type="primary", use_container_width=True):
+                        if user_log and pwd_log:
+                            auth = db.authenticate_user(user_log.strip(), pwd_log)
+                            if auth["success"]:
+                                load_user_data(user_log.strip(), auth["role"])
+                            else:
+                                st.error("Sai tên đăng nhập hoặc mật khẩu!")
+                        else:
+                            st.error("Vui lòng nhập đủ thông tin!")
+            
+            with tab_reg:
+                with st.form("register_form", border=False):
+                    user_reg = st.text_input("Tên đăng nhập mới", key="user_reg")
+                    pwd_reg = st.text_input("Mật khẩu mới", type="password", key="pwd_reg")
+                    
+                    if st.form_submit_button("Đăng ký tài khoản", type="primary", use_container_width=True):
+                        if user_reg and pwd_reg:
+                            if db.register_user(user_reg.strip(), pwd_reg):
+                                st.success("Tạo tài khoản thành công! Hãy đăng nhập lại.")
+                            else:
+                                st.error("Tên đăng nhập đã tồn tại!")
+                        else:
+                            st.error("Vui lòng nhập đủ thông tin!")
+
     st.stop()
 
 # --- TOP HEADER MOCKUP ---
 st.write("") # Dãn cách xíu
-c_logo, c_search, c_greet, c_out, c_ord, c_fav, c_cart = st.columns([1.5, 2.2, 1.5, 0.8, 1, 1.2, 1], gap="small")
 
-with c_logo:
-    st.markdown('<div class="header-logo">DDK Store</div>', unsafe_allow_html=True)
+# Đưa tên shop lên trên cùng
+st.markdown('<div class="header-logo" style="margin-bottom: 15px;">DDK Store</div>', unsafe_allow_html=True)
+
+if st.session_state.user_role == "admin":
+    c_search, c_greet, c_admin, c_out, c_ord, c_fav, c_cart = st.columns([3.5, 1.4, 1.3, 1.0, 1.3, 1.3, 1.3], gap="small", vertical_alignment="center")
+else:
+    c_search, c_greet, c_out, c_ord, c_fav, c_cart = st.columns([4.0, 1.5, 1.2, 1.2, 1.5, 1.5], gap="small", vertical_alignment="center")
+
 # SHPP-4: Ô tìm kiếm sản phẩm thông minh trên Header
 with c_search:
     product_names = [p["name"] for p in st.session_state.products]
     search_query = st.selectbox("Tìm kiếm", options=product_names, index=None, placeholder="🔍 Search for products...", label_visibility="collapsed")
 with c_greet:
-    is_premium = "👑" if st.session_state.username.lower() == "kien" else "👋"
-    st.markdown(f"<div style='margin-top: 0.5rem; white-space: nowrap; font-size: 0.95rem;'>{is_premium} Hi, <b>{st.session_state.username}</b>!</div>", unsafe_allow_html=True)
+    is_premium = "👑" if st.session_state.user_role == "admin" else "👋"
+    st.markdown(f"<div style='white-space: nowrap; font-size: 0.95rem; text-align: center;'>{is_premium} Hi, <b>{st.session_state.username}</b>!</div>", unsafe_allow_html=True)
+
+if st.session_state.user_role == "admin":
+    with c_admin:
+        if st.button("⚙️ Admin", use_container_width=True):
+            go_to_page("Admin")
+
 with c_out:
     if st.button("Thoát", use_container_width=True):
         st.session_state.logged_in = False
         st.session_state.username = ""
+        st.session_state.user_role = "user"
         st.session_state.current_page = "Home"
         st.rerun()
 with c_ord:
-    order_count = len(st.session_state.orders)
+    order_count = len(db.get_user_orders(st.session_state.username))
     if st.button(f"📦 Đơn ({order_count})", use_container_width=True):
         go_to_page("Orders")
 with c_fav:
@@ -273,10 +289,26 @@ if st.session_state.current_page == "Home":
     
     # SHPP-2: Logic lọc sản phẩm Sidebar
     # 2. BỐ CỤC SIDEBAR (Bộ Lọc) & MAIN CONTENT (Thẻ Sản Phẩm)
-    sidebar_col, main_col = st.columns([1, 4], gap="large")
+    sidebar_col, main_col = st.columns([1.3, 3.7], gap="large")
     
     with sidebar_col:
         
+        # --- CHATBOT MOCK ---
+        with st.expander("💬 Chatbot DDK AI", expanded=False):
+            st.caption("Hãy hỏi tôi về đơn hàng hoặc sản phẩm!")
+            chat_input = st.text_input("Gửi tin nhắn", key="chat_input", label_visibility="collapsed", placeholder="Ví dụ: Lấy cho tôi bảng size")
+            if st.button("Gửi", use_container_width=True):
+                if chat_input:
+                    ans = "Cảm ơn cậu đã quan tâm, DDK Store sẽ phản hồi lại sớm nhất!"
+                    if "size" in chat_input.lower():
+                        ans = "Đa số áo bên mình fit theo chuẩn Form Âu rộng rãi. Bạn có thể chọn lùi 1 size nếu muốn mặc ôm nhé!"
+                    elif "ship" in chat_input.lower() or "giao" in chat_input.lower():
+                        ans = "Thời gian giao hàng trung bình là 2-3 ngày làm việc đối với hỏa tốc (trong TP.HCM)."
+                    elif "hoàn" in chat_input.lower() or "trả" in chat_input.lower():
+                        ans = "Bên mình hỗ trợ hoàn đồ miễn phí trong 7 ngày đầu chừng nào tem mác còn nguyên. Bạn có muốn đổi trả đơn hàng gần nhất không?"
+                    st.success(f"🤖 **AI:** {ans}")
+        
+        st.markdown('<br>', unsafe_allow_html=True)
         st.markdown('### Lọc Khoảng Giá')
         price_opts = list(range(0, 5100000, 100000))
         price_labels = [format_currency_vnd(x) for x in price_opts]
@@ -358,6 +390,14 @@ if st.session_state.current_page == "Home":
                     # SHPP-3: Hiển thị chi tiết sản phẩm và nút Thích
                     with st.expander("📝 Chi tiết sản phẩm"):
                         st.write(p['desc'])
+                        
+                        # --- AI RECOMMENDATION MOCK ---
+                        st.markdown("**💡 Có thể bạn cũng thích:**")
+                        related = [rp for rp in st.session_state.products if rp["category"] == p["category"] and rp["id"] != p["id"]]
+                        if related:
+                            for rp in related[:2]:  # Lấy 2 sản phẩm ngẫu nhiên cùng danh mục
+                                st.caption(f"- {rp['name']} ({format_currency_vnd(rp['price'])})")
+                        
                         if st.button(f"Thích {heart}", key=f"fav_{p['id']}", use_container_width=True):
                             toggle_favorite(p['id'])
                             st.rerun()
@@ -447,9 +487,21 @@ elif st.session_state.current_page == "Checkout":
             with st.container(border=True):
                 st.subheader("Hoá Đơn Bán Lẻ")
                 subtotal = sum((get_product(pid)["price"] * qty for pid, qty in st.session_state.cart.items()))
-                # SHPP-6: Tính toán Voucher và Phí vận chuyển.
-                discount = subtotal * 0.1 if voucher.strip().upper() == "SALE10" else 0
-                shipping_fee = 20000 # Tạm fix vì tính logic đơn giản MVP
+                # SHPP-6: Tính toán Voucher phức tạp và Phí vận chuyển.
+                voucher_code = voucher.strip().upper()
+                discount = 0
+                shipping_fee = 20000
+                if voucher_code == "SALE10":
+                    discount = subtotal * 0.1
+                    st.success("Áp dụng mã SALE10 thành công (Giảm 10%)")
+                elif voucher_code == "FREESHIP":
+                    discount = min(shipping_fee, 50000)
+                    st.success("Áp dụng mã FREESHIP thành công")
+                elif voucher_code == "DDKVIP" and st.session_state.user_role == "admin":
+                    discount = subtotal * 0.5
+                    st.success("Mã VIP của Admin (Giảm 50%!)")
+                elif voucher_code:
+                    st.error("Mã voucher không hợp lệ hoặc đã hết hạn.")
                 
                 total = subtotal + shipping_fee - discount
                 
@@ -463,16 +515,11 @@ elif st.session_state.current_page == "Checkout":
                 st.write("")
                 # SHPP-7: Logic Thanh toán và hiệu ứng thành công.
                 if st.button("XÁC NHẬN MUA", use_container_width=True, type="primary"):
-                    new_order = {
-                        "id": f"ORD-{random.randint(1000, 9999)}",
-                        "date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
-                        "items": dict(st.session_state.cart),
-                        "total": total,
-                        "status": "Đang xử lý"
-                    }
-                    st.session_state.orders.append(new_order)
+                    order_id = f"ORD-{random.randint(1000, 9999)}"
+                    db.save_order(order_id, st.session_state.username, st.session_state.cart, total)
+                    st.session_state.products = fetch_products() # Update inventory locally
                     st.session_state.cart = {} # Làm rỗng luồng
-                    st.success("🎉 Giao dịch thành công! Gói hàng của bạn đã được đóng gói ảo.")
+                    st.success("🎉 Giao dịch thành công! Gói hàng của bạn đã được đóng gói.")
                     st.balloons()
 
 # SHPP-8: Hiển thị lịch sử đơn hàng đã mua.
@@ -480,13 +527,14 @@ elif st.session_state.current_page == "Orders":
     st.button("← Tiếp tục Mua Sắm", on_click=lambda: go_to_page("Home"))
     st.markdown("<h2>📦 Lịch Sử Đơn Hàng</h2>", unsafe_allow_html=True)
     
-    if not st.session_state.orders:
+    user_orders = db.get_user_orders(st.session_state.username)
+    if not user_orders:
         st.info("Cậu chưa có đơn hàng nào cả. Trở về trang chủ rinh thêm đồ nhé!")
     else:
-        for order in reversed(st.session_state.orders): # Hiển thị đơn mới nhất lên đầu
+        for order in user_orders:
             with st.container(border=True):
                 st.subheader(f"Mã đơn: {order['id']}")
-                st.caption(f"Mua ngày: {order['date']}")
+                st.caption(f"Mua ngày: {order['order_date']}")
                 st.markdown(f"**Trạng thái:** <span style='color: #28a745;'>{order['status']}</span>", unsafe_allow_html=True)
                 st.divider()
                 
@@ -495,4 +543,45 @@ elif st.session_state.current_page == "Orders":
                     if p:
                         st.write(f"- **{qty}x** {p['name']} ({format_currency_vnd(p['price'] * qty)})")
                 
-                st.markdown(f"#### Tổng thanh toán: <span style='color: #A7C7E7;'>{format_currency_vnd(order['total'])}</span>", unsafe_allow_html=True)
+                st.markdown(f"#### Tổng thanh toán: <span style='color: #A7C7E7;'>{format_currency_vnd(order['total_amount'])}</span>", unsafe_allow_html=True)
+
+elif st.session_state.current_page == "Admin":
+    if st.session_state.user_role != "admin":
+        st.error("Bạn không có quyền truy cập trang này!")
+        st.stop()
+        
+    st.button("← Trở về Trang chủ", on_click=lambda: go_to_page("Home"))
+    st.markdown("<h2>⚙️ Admin Dashboard</h2>", unsafe_allow_html=True)
+    
+    t_dash, t_orders = st.tabs(["📊 Thống kê", "📋 Quản lý Đơn hàng"])
+    
+    with t_dash:
+        stats = db.get_summary_stats()
+        c1, c2, c3 = st.columns(3)
+        c1.metric("Tổng doanh thu (VNĐ)", format_currency_vnd(stats['revenue']))
+        c2.metric("Tổng đơn hàng", stats['orders'])
+        c3.metric("Tổng người dùng", stats['users'])
+        
+        st.info("Ở phiên bản sau, ta có thể tích hợp thư viện Plotly để vẽ biểu đồ doanh số theo tháng.")
+        
+    with t_orders:
+        admin_orders = db.get_all_orders_admin()
+        if not admin_orders:
+            st.info("Chưa có đơn hàng nào trên hệ thống.")
+        else:
+            for o in admin_orders:
+                with st.expander(f"Đơn {o['id']} - Khách: {o['username']} - {format_currency_vnd(o['total_amount'])} - {o['status']}"):
+                    st.write(f"**Ngày mua:** {o['order_date']}")
+                    
+                    c_st1, c_st2 = st.columns([2,1])
+                    with c_st1:
+                        new_st = st.selectbox("Cập nhật trạng thái", 
+                                            ["Đang xử lý", "Đã giao cho vận chuyển", "Giao thành công", "Đã Hủy"], 
+                                            key=f"st_{o['id']}")
+                    with c_st2:
+                        st.write("") # padding
+                        st.write("")
+                        if st.button("Cập nhật", key=f"btn_{o['id']}", use_container_width=True):
+                            db.update_order_status(o['id'], new_st)
+                            st.success("Đã cập nhật trạng thái đơn hàng!")
+                            st.rerun()
