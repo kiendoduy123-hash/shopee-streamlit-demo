@@ -7,64 +7,107 @@ import database as db
 # Thiết lập trang - Phải là lệnh đầu tiên
 st.set_page_config(page_title="Shopee MVP Prototype", page_icon="🛍️", layout="wide", initial_sidebar_state="expanded")
 
-# SHPP-1: Giao diện Blue Pastel và Login flow
+# SHPP-1: Giao diện Neobrutalism và Login flow
 # --- CUSTOM CSS ---
 st.markdown("""
 <style>
     /* Tổng quan Font & Nền */
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;900&display=swap');
+    
     .stApp {
-        background-color: var(--bg-color);
-        font-family: 'Inter', sans-serif;
+        background-color: #F8F9FA;
+        font-family: 'Space Grotesk', sans-serif;
+        color: #000;
     }
     
     /* Ẩn bớt thanh viền ngăn cách mặc định của Streamlit */
     hr {
-        border-top: 1px solid #F1F3F4;
+        border-top: 3px solid #000;
         margin: 1.5rem 0;
     }
 
-    /* Bo góc 25px và Đổ bóng cho [st.container(border=True)] và Sidebar */
+    /* Bo góc 0px và Đổ bóng cứng cho [st.container(border=True)] và Sidebar */
     [data-testid="stVerticalBlockBorderWrapper"], [data-testid="stSidebar"] {
-        border-radius: 25px !important;
+        border-radius: 0px !important;
+        border: 3px solid #000 !important;
         background-color: white;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 6px 6px 0px #000 !important;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     
     /* Hiệu ứng di chuột nổi lơ lửng cho Thẻ sản phẩm */
     [data-testid="stVerticalBlockBorderWrapper"]:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 10px 20px rgba(167, 199, 231, 0.15) !important;
-        border-color: #A7C7E7 !important;
+        transform: translate(2px, 2px);
+        box-shadow: 4px 4px 0px #000 !important;
     }
 
-    /* Tuỳ chỉnh Nút Bấm: Bo tròn, đậm */
+    /* Tuỳ chỉnh Nút Bấm: Vuông, viền đen dày, bóng đen cứng */
     .stButton > button {
-        border-radius: 25px !important;
-        font-weight: 700 !important;
-        transition: all 0.2s ease;
+        border-radius: 0px !important;
+        font-weight: 800 !important;
+        text-transform: uppercase;
+        background-color: #FFF !important;
+        color: #000 !important;
+        border: 3px solid #000 !important;
+        box-shadow: 4px 4px 0px #000 !important;
+        transition: all 0.1s ease;
         width: 100%;
-        border: 1px solid #E0E0E0;
         white-space: nowrap;
+        padding-left: 0.4rem !important;
+        padding-right: 0.4rem !important;
+        font-size: 0.9rem !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        text-align: center !important;
     }
-    .stButton > button:hover {
-        border-color: #A7C7E7 !important;
-        background-color: rgba(167, 199, 231, 0.1) !important;
-        color: #A7C7E7 !important;
+    
+    .stButton > button p {
+        margin: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        width: 100%;
+    }
+    
+    .stButton > button[kind="primary"] {
+        background-color: #FF90E8 !important; /* Hồng neon cho nút chính */
+    }
+
+    .stButton > button:hover, .stButton > button:active {
+        transform: translate(4px, 4px) !important;
+        box-shadow: 0px 0px 0px #000 !important;
+        background-color: #FFC900 !important; /* Vàng nghệ khi hover */
+        border-color: #000 !important;
+        color: #000 !important;
     }
 
     /* Ô input tìm kiếm & chatbot */
-    [data-testid="stTextInput"] > div > div {
-        border-radius: 25px !important;
-        background-color: #F1F3F4 !important;
+    [data-testid="stTextInput"] > div > div, 
+    [data-testid="stSelectbox"] > div > div, 
+    [data-testid="stNumberInput"] > div > div {
+        border-radius: 0px !important;
+        background-color: #FFF !important;
+        border: 3px solid #000 !important;
+        box-shadow: 4px 4px 0px #000 !important;
+        transition: all 0.1s ease;
     }
-    [data-testid="stTextInput"] input {
-        padding-left: 15px !important;
-        padding-right: 15px !important;
-        background-color: transparent !important;
+    
+    [data-testid="stTextInput"] input, 
+    [data-testid="stSelectbox"] input,
+    [data-testid="stNumberInput"] input {
+        font-weight: bold;
+        color: #000 !important;
     }
-    [data-testid="stTextInput"] > div > div:focus-within {
-        border: 2px solid #A7C7E7 !important;
-        background-color: white !important;
+    
+    [data-testid="stTextInput"] > div > div:focus-within,
+    [data-testid="stSelectbox"] > div > div:focus-within,
+    [data-testid="stNumberInput"] > div > div:focus-within {
+        transform: translate(2px, 2px);
+        box-shadow: 2px 2px 0px #000 !important;
     }
     
     /* Đầu trang (Header Logo) */
@@ -72,40 +115,55 @@ st.markdown("""
         font-size: 2.2rem;
         font-weight: 900;
         letter-spacing: -1px;
-        color: #202124;
-        white-space: nowrap;
+        color: #000;
+        background-color: #00E59B;
+        border: 3px solid #000;
+        padding: 5px 15px;
+        display: inline-block;
+        box-shadow: 5px 5px 0px #000;
+        text-transform: uppercase;
+        margin-bottom: 10px;
     }
     
     /* Ảnh sản phẩm đồng nhất */
     [data-testid="stImage"] img {
         height: 200px !important;
         object-fit: cover !important;
-        border-radius: 15px !important;
+        border-radius: 0px !important;
+        border: 3px solid #000 !important;
     }
     
     /* Đồng bộ chiều cao văn bản thẻ sản phẩm */
     .product-title {
-        font-weight: 700;
-        font-size: 1.05rem;
+        font-weight: 900;
+        font-size: 1.1rem;
         min-height: 3.2rem;
         margin-bottom: 0.5rem;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
+        color: #000;
     }
     .product-caption {
         font-size: 0.85rem;
-        color: #6c757d;
+        font-weight: bold;
+        color: #000;
+        background-color: #FFC900;
+        border: 2px solid #000;
+        padding: 2px 6px;
+        display: inline-block;
         margin-top: 0.5rem;
-        min-height: 1.5rem;
+        margin-bottom: 0.8rem;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
     .product-rating {
         font-size: 0.9rem;
+        font-weight: bold;
         margin-bottom: 0.8rem;
+        color: #000;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -379,7 +437,7 @@ if st.session_state.current_page == "Home":
                     st.markdown(f'<div class="product-rating">⭐ {p.get("rating", 5.0)}/5.0</div>', unsafe_allow_html=True)
                     
                     # Nút chức năng trong cùng container
-                    btn1, btn2 = st.columns([1, 1])
+                    btn1, btn2 = st.columns([1, 1.25])
                     with btn1:
                         if st.button("🛒 Thêm", key=f"add_{p['id']}", use_container_width=True):
                             add_to_cart(p['id'])
@@ -476,7 +534,7 @@ elif st.session_state.current_page == "Checkout":
             with st.container(border=True):
                 st.subheader("1. Thông tin Vận chuyển")
                 st.selectbox("Chọn địa chỉ lưu sẵn:", ["123 Nguyễn Huệ, Quận 1, TP.HCM", "Tuổi Trẻ Tower, Quận Cầu Giấy, HN", "Đà Nẵng"])
-                st.radio("Đơn vị Giao hàng:", ["🚚 GHTK Tiêu chuẩn (₫20,000)", "🚀 Hoả tốc (₫50,000)"])
+                shipping_option = st.radio("Đơn vị Giao hàng:", ["🚚 GHTK Tiêu chuẩn (₫20,000)", "🚀 Hoả tốc (₫50,000)"])
                 
             with st.container(border=True):
                 st.subheader("2. Hình thức Thanh toán")
@@ -490,7 +548,7 @@ elif st.session_state.current_page == "Checkout":
                 # SHPP-6: Tính toán Voucher phức tạp và Phí vận chuyển.
                 voucher_code = voucher.strip().upper()
                 discount = 0
-                shipping_fee = 20000
+                shipping_fee = 50000 if "Hoả tốc" in shipping_option else 20000
                 if voucher_code == "SALE10":
                     discount = subtotal * 0.1
                     st.success("Áp dụng mã SALE10 thành công (Giảm 10%)")
